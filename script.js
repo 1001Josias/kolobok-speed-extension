@@ -10,25 +10,17 @@ async function main(){
    let index = 0
    let noImage = 'https://wax.simplemarket.io/assets/images/no-photo.png'
 
-   for(let kolobokCard of KolobokCardArray){      
-      if(index < 100){
-         addEventListener('scroll',()=>{
-            let urlImage = kolobokImageArray[index].src
-            if(urlImage !== noImage){
-               log(`Here: ${urlImage}`)
-               log(index)
-               let genome = getGenomeInImage(urlImage)
-               let speed = calculateSpeed(genome)
-               // let stealth = calculateStealth(genome)
-               let tagFont = createTagFont()
-               tagFont.innerHTML = `Speed ${speed}`
-               addSpeedInKolobokCard(kolobokCard,tagFont)
-               index++
-            }else{
-               log("Url da imagem não encontrada, rode scroll do mouse.")
-            }
-         })
-      }
+   for(let kolobokCard of KolobokCardArray){
+      let urlImage = (kolobokImageArray[index].src == noImage)? await waitMoveScrollMouse(kolobokImageArray,index): kolobokImageArray[index].src
+      
+      log(`Here: ${urlImage}`)
+      let genome = getGenomeInImage(urlImage)
+      let speed = calculateSpeed(genome)
+      // let stealth = calculateStealth(genome)
+      let tagFont = createTagFont()
+      tagFont.innerHTML = `Speed ${speed}`
+      addSpeedInKolobokCard(kolobokCard,tagFont)
+      index++
    }
 }
 
