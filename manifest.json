@@ -1,0 +1,13 @@
+{
+   "manifest_version":2,
+   "name":"kolobok-speed-extension",
+   "description":"An extension to show the speed of koloboks listed on the market.",
+   "version":"0.1",
+   "content_scripts":[
+      {
+         "matches":["https://wax.simplemarket.io/authors/ilovekolobok*"],
+         "js":["content.js"]
+      }
+   ],
+   "web_accessible_resources": ["script.js"]
+}
