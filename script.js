@@ -5,21 +5,23 @@ const log = console.log
 main()
 
 async function main(){
-   let KolobokCardArray = document.querySelectorAll('.mt-0')
+   let KolobokCardArray = document.querySelectorAll('.card-image-wrapper')
    let kolobokImageArray = document.querySelectorAll('.mat-card-image')
    let index = 0
    let noImage = 'https://wax.simplemarket.io/assets/images/no-photo.png'
 
    for(let kolobokCard of KolobokCardArray){
       let urlImage = (kolobokImageArray[index].src == noImage)? await waitMoveScrollMouse(kolobokImageArray,index): kolobokImageArray[index].src
-      
+   
       log(`Here: ${urlImage}`)
       let genome = getGenomeInImage(urlImage)
       let speed = calculateSpeed(genome)
       // let stealth = calculateStealth(genome)
-      let tagFont = createTagFont()
-      tagFont.innerHTML = `Speed ${speed}`
-      addSpeedInKolobokCard(kolobokCard,tagFont)
+      let speedLabel = createLabel(`Speed ${speed}`)
+      // let stealthLabel = createTagFont(`Stealth ${stealth}`)
+      let div = createDiv('status')
+      insertLabelInDiv(div,speedLabel)
+      insertDivInKolobokCard(kolobokCard,div)
       index++
    }
 }
@@ -32,16 +34,29 @@ function waitMoveScrollMouse(kolobokImageArray,index){
    })
 }
 
-function createTagFont(){
-   let font = document.createElement('font')
-   font.style.fontSize = '1rem'
-   font.style.fontWeight = 700
-   font.style.color = 'green'
-   return font
+function createLabel(labelValue){
+   let label = document.createElement('label')
+   label.style.fontSize = '0.9rem'
+   label.style.fontWeight = 700
+   label.style.color = 'green'
+   label.innerHTML = labelValue
+   return label
 }
 
-function addSpeedInKolobokCard(kolobokCard,tagFont){
-   kolobokCard.appendChild(tagFont)
+function insertLabelInDiv(div,label){
+   div.appendChild(label)
+}
+
+function createDiv(id){
+   let div = document.createElement('div')
+   div.setAttribute('id',id)
+   return div
+}
+
+function insertDivInKolobokCard(kolobokCard,div){
+   div.style.marginTop = '-220px'
+   div.style.marginLeft = '-100px'
+   kolobokCard.appendChild(div)
 }
 
 function getGenomeInImage(urlImage){
