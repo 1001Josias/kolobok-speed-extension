@@ -1,5 +1,8 @@
 // const koloboksArray = document.querySelectorAll('.mt-0')
 // const kolobokImagesArray = document.querySelectorAll('.mat-card-image')
+const skip = ''
+
+let url = 'https://wax.simplemarket.io/authors/ilovekolobok?skip=0&limit=100&categories=kolobok&asset.mdata.health.raw=100&priceFilter=1&locale=en'
 const log = console.log
 
 main()
@@ -9,11 +12,10 @@ async function main(){
    let kolobokImageArray = document.querySelectorAll('.mat-card-image')
    let index = 0
    let noImage = 'https://wax.simplemarket.io/assets/images/no-photo.png'
-
    for(let kolobokCard of KolobokCardArray){
       let urlImage = (kolobokImageArray[index].src == noImage)? await waitMoveScrollMouse(kolobokImageArray,index): kolobokImageArray[index].src
-   
-      log(`Here: ${urlImage}`)
+
+      // log(`Here: ${urlImage}`)
       let genome = getGenomeInImage(urlImage)
       let speed = calculateSpeed(genome)
       // let stealth = calculateStealth(genome)
@@ -25,6 +27,17 @@ async function main(){
       index++
    }
 }
+
+function createUrlApi(url){
+   let dinamicValuesArray = url.substring(url.lastIndexOf('?')+1).split('&')
+   let skip = dinamicValuesArray.filter(value => value.includes('skip'))
+   let limit = dinamicValuesArray.filter(value => value.includes('limit'))
+   let categories = dinamicValuesArray.filter(value => value.includes('categories'))
+   let asset = dinamicValuesArray.filter(value=> value.includes('asset'))
+   let urlApi = `https://wax.simplemarket.io/api/v2/market?${skip}&${limit}&authors=ilovekolobok&&${categories}&${asset}&sortOrder=1%20Request%20Method:%20GET`
+   return urlApi
+}
+
 
 function waitMoveScrollMouse(kolobokImageArray,index){
    return new Promise((resolve,reject)=>{
