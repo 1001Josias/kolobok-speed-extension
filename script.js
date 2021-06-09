@@ -1,28 +1,41 @@
-// const koloboksArray = document.querySelectorAll('.mt-0')
-// const kolobokImagesArray = document.querySelectorAll('.mat-card-image')
-const skip = ''
-
-let url = 'https://wax.simplemarket.io/authors/ilovekolobok?skip=0&limit=100&categories=kolobok&asset.mdata.health.raw=100&priceFilter=1&locale=en'
+// let url = 'https://wax.simplemarket.io/authors/ilovekolobok?skip=0&limit=100&categories=kolobok&asset.mdata.health.raw=100&priceFilter=1&locale=en'
 const log = console.log
 
 main()
 
 async function main(){
    let KolobokCardArray = document.querySelectorAll('.card-image-wrapper')
-   let kolobokImageArray = document.querySelectorAll('.mat-card-image')
    let index = 0
-   let noImage = 'https://wax.simplemarket.io/assets/images/no-photo.png'
+   let urlAtual = window.location.href
+   log(urlAtual)
+   let urlApi = createUrlApi(urlAtual)
+   log(urlApi)
+   let apiResponse = await apiResponseJson(urlApi)
+   let urlArrayImages = getAllUrlImages(apiResponse)
+   
    for(let kolobokCard of KolobokCardArray){
-      let genome = getGenomeInImage(urlImage)
+      let genome = getGenomeInImage(urlArrayImages[index])
       let speed = calculateSpeed(genome)
-      // let stealth = calculateStealth(genome)
-      let speedLabel = createLabel(`Speed ${speed}`)
-      // let stealthLabel = createTagFont(`Stealth ${stealth}`)
+      let stealth = calculateStealth(genome)
+      let speedLabel = createLabel(`Speed ${speed}`,'green')
+      let stealthLabel = createLabel(`Stealth ${stealth}`,'orange')
+      let br = createTagBr()
       let div = createDiv('status')
       insertLabelInDiv(div,speedLabel)
+      insertLabelInDiv(div,br)
+      insertLabelInDiv(div,stealthLabel)
       insertDivInKolobokCard(kolobokCard,div)
       index++
    }
+}
+
+function getAllUrlImages(apiResponseJson){
+   return apiResponseJson.items.map(value => value.mdata.img)
+}
+
+async function apiResponseJson(urlApi){
+   const response = await fetch(urlApi)
+   return await response.json()
 }
 
 function createUrlApi(url){
@@ -35,13 +48,17 @@ function createUrlApi(url){
    return urlApi
 }
 
-function createLabel(labelValue){
+function createLabel(labelValue,color){
    let label = document.createElement('label')
    label.style.fontSize = '0.9rem'
    label.style.fontWeight = 700
-   label.style.color = 'green'
+   label.style.color = color
    label.innerHTML = labelValue
    return label
+}
+
+function createTagBr(){
+   return document.createElement('br')
 }
 
 function insertLabelInDiv(div,label){
