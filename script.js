@@ -1,47 +1,80 @@
-// const koloboksArray = document.querySelectorAll('.mt-0')
-// const kolobokImagesArray = document.querySelectorAll('.mat-card-image')
+// let url = 'https://wax.simplemarket.io/authors/ilovekolobok?skip=0&limit=100&categories=kolobok&asset.mdata.health.raw=100&priceFilter=1&locale=en'
 const log = console.log
 
 main()
 
 async function main(){
-   let KolobokCardArray = document.querySelectorAll('.mt-0')
-   let kolobokImageArray = document.querySelectorAll('.mat-card-image')
+   let KolobokCardArray = document.querySelectorAll('.card-image-wrapper')
    let index = 0
-   let noImage = 'https://wax.simplemarket.io/assets/images/no-photo.png'
-
+   let urlAtual = window.location.href
+   log(urlAtual)
+   let urlApi = createUrlApi(urlAtual)
+   log(urlApi)
+   let apiResponse = await apiResponseJson(urlApi)
+   let urlArrayImages = getAllUrlImages(apiResponse)
+   
    for(let kolobokCard of KolobokCardArray){
-      let urlImage = (kolobokImageArray[index].src == noImage)? await waitMoveScrollMouse(kolobokImageArray,index): kolobokImageArray[index].src
-      
-      log(`Here: ${urlImage}`)
-      let genome = getGenomeInImage(urlImage)
+      let genome = getGenomeInImage(urlArrayImages[index])
       let speed = calculateSpeed(genome)
-      // let stealth = calculateStealth(genome)
-      let tagFont = createTagFont()
-      tagFont.innerHTML = `Speed ${speed}`
-      addSpeedInKolobokCard(kolobokCard,tagFont)
+      let stealth = calculateStealth(genome)
+      let speedLabel = createLabel(`Speed ${speed}`,'green')
+      let stealthLabel = createLabel(`Stealth ${stealth}`,'orange')
+      let br = createTagBr()
+      let div = createDiv('status')
+      insertLabelInDiv(div,speedLabel)
+      insertLabelInDiv(div,br)
+      insertLabelInDiv(div,stealthLabel)
+      insertDivInKolobokCard(kolobokCard,div)
       index++
    }
 }
 
-function waitMoveScrollMouse(kolobokImageArray,index){
-   return new Promise((resolve,reject)=>{
-      addEventListener('scroll',async(event)=>{
-         resolve(kolobokImageArray[index].src)
-      })
-   })
+function getAllUrlImages(apiResponseJson){
+   return apiResponseJson.items.map(value => value.mdata.img)
 }
 
-function createTagFont(){
-   let font = document.createElement('font')
-   font.style.fontSize = '1rem'
-   font.style.fontWeight = 700
-   font.style.color = 'green'
-   return font
+async function apiResponseJson(urlApi){
+   const response = await fetch(urlApi)
+   return await response.json()
 }
 
-function addSpeedInKolobokCard(kolobokCard,tagFont){
-   kolobokCard.appendChild(tagFont)
+function createUrlApi(url){
+   let dinamicValuesArray = url.substring(url.lastIndexOf('?')+1).split('&')
+   let skip = dinamicValuesArray.filter(value => value.includes('skip'))
+   let limit = dinamicValuesArray.filter(value => value.includes('limit'))
+   let categories = dinamicValuesArray.filter(value => value.includes('categories'))
+   let asset = dinamicValuesArray.filter(value=> value.includes('asset'))
+   let urlApi = `https://wax.simplemarket.io/api/v2/market?${skip}&${limit}&authors=ilovekolobok&&${categories}&${asset}&sortOrder=1%20Request%20Method:%20GET`
+   return urlApi
+}
+
+function createLabel(labelValue,color){
+   let label = document.createElement('label')
+   label.style.fontSize = '0.9rem'
+   label.style.fontWeight = 700
+   label.style.color = color
+   label.innerHTML = labelValue
+   return label
+}
+
+function createTagBr(){
+   return document.createElement('br')
+}
+
+function insertLabelInDiv(div,label){
+   div.appendChild(label)
+}
+
+function createDiv(id){
+   let div = document.createElement('div')
+   div.setAttribute('id',id)
+   return div
+}
+
+function insertDivInKolobokCard(kolobokCard,div){
+   div.style.marginTop = '-220px'
+   div.style.marginLeft = '-100px'
+   kolobokCard.appendChild(div)
 }
 
 function getGenomeInImage(urlImage){
