@@ -13,9 +13,6 @@ async function main(){
    let index = 0
    let noImage = 'https://wax.simplemarket.io/assets/images/no-photo.png'
    for(let kolobokCard of KolobokCardArray){
-      let urlImage = (kolobokImageArray[index].src == noImage)? await waitMoveScrollMouse(kolobokImageArray,index): kolobokImageArray[index].src
-
-      // log(`Here: ${urlImage}`)
       let genome = getGenomeInImage(urlImage)
       let speed = calculateSpeed(genome)
       // let stealth = calculateStealth(genome)
@@ -36,15 +33,6 @@ function createUrlApi(url){
    let asset = dinamicValuesArray.filter(value=> value.includes('asset'))
    let urlApi = `https://wax.simplemarket.io/api/v2/market?${skip}&${limit}&authors=ilovekolobok&&${categories}&${asset}&sortOrder=1%20Request%20Method:%20GET`
    return urlApi
-}
-
-
-function waitMoveScrollMouse(kolobokImageArray,index){
-   return new Promise((resolve,reject)=>{
-      addEventListener('scroll',async(event)=>{
-         resolve(kolobokImageArray[index].src)
-      })
-   })
 }
 
 function createLabel(labelValue){
