@@ -1,36 +1,46 @@
-// let url = 'https://wax.simplemarket.io/authors/ilovekolobok?skip=0&limit=100&categories=kolobok&asset.mdata.health.raw=100&priceFilter=1&locale=en'
 const log = console.log
 
 main()
 
 async function main(){
-   let KolobokCardArray = document.querySelectorAll('.card-image-wrapper')
-   let index = 0
-   let urlAtual = window.location.href
-   log(urlAtual)
-   let urlApi = createUrlApi(urlAtual)
-   log(urlApi)
-   let apiResponse = await apiResponseJson(urlApi)
-   let urlArrayImages = getAllUrlImages(apiResponse)
-   
-   for(let kolobokCard of KolobokCardArray){
-      let genome = getGenomeInImage(urlArrayImages[index])
-      let speed = calculateSpeed(genome)
-      let stealth = calculateStealth(genome)
-      let speedLabel = createLabel(`Speed ${speed}`,'green')
-      let stealthLabel = createLabel(`Stealth ${stealth}`,'orange')
-      let br = createTagBr()
-      let div = createDiv('status')
-      insertLabelInDiv(div,speedLabel)
-      insertLabelInDiv(div,br)
-      insertLabelInDiv(div,stealthLabel)
-      insertDivInKolobokCard(kolobokCard,div)
-      index++
-   }
+   insertValuesInAllKoloboks()
 }
 
+async function insertValuesInAllKoloboks(){
+   window.addEventListener('load',async(event)=>{
+      let KolobokCardArray = document.querySelectorAll('.card-image-wrapper')
+      let index = 0
+      let urlAtual = window.location.href
+      let urlApi = createUrlApi(urlAtual)
+      let apiResponse = await apiResponseJson(urlApi)
+      let urlArrayImages = getAllUrlImages(apiResponse)
+      
+      for(let kolobokCard of KolobokCardArray){
+         let genome = getGenomeInImage(urlArrayImages[index])
+         log(kolobokCard)
+         log(genome)
+         let speed = calculateSpeed(genome)
+         log(speed)
+         let stealth = calculateStealth(genome)
+         log(stealth)
+         let speedLabel = createLabel(`Speed ${speed}`,'green')
+         let stealthLabel = createLabel(`Stealth ${stealth}`,'orange')
+         let br = createTagBr()
+         let div = createDiv('status')
+         insertLabelInDiv(div,speedLabel)
+         insertLabelInDiv(div,br)
+         insertLabelInDiv(div,stealthLabel)
+         insertDivInKolobokCard(kolobokCard,div)
+         index++
+      }
+   })
+   }
+
+
 function getAllUrlImages(apiResponseJson){
-   return apiResponseJson.items.map(value => value.mdata.img)
+   let urlImages = apiResponseJson.items.map(value => value.mdata.img)
+   log(urlImages)
+   return urlImages
 }
 
 async function apiResponseJson(urlApi){
@@ -44,7 +54,8 @@ function createUrlApi(url){
    let limit = dinamicValuesArray.filter(value => value.includes('limit'))
    let categories = dinamicValuesArray.filter(value => value.includes('categories'))
    let asset = dinamicValuesArray.filter(value=> value.includes('asset'))
-   let urlApi = `https://wax.simplemarket.io/api/v2/market?${skip}&${limit}&authors=ilovekolobok&&${categories}&${asset}&sortOrder=1%20Request%20Method:%20GET`
+   let urlApi = `https://wax.simplemarket.io/api/v2/market?${skip}&${limit}&authors=ilovekolobok&&${categories}&${asset}&%20Request%20Method:%20GET`
+   log(urlApi)
    return urlApi
 }
 
